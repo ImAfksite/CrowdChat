@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Real-time web chat platform for a large public online community",
   "main": "server/server.js",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "scripts": {
     "setup": "npm install && cd client && npm install && cd .. && npm run db:seed",
     "db:seed": "node server/db/seed.js",
@@ -28,50 +31,13 @@
     "concurrently": "^8.2.2",
     "nodemon": "^3.1.0"
   },
-  "keywords": ["chat", "realtime", "socket.io", "react", "sqlite"],
+  "keywords": [
+    "chat",
+    "realtime",
+    "socket.io",
+    "react",
+    "sqlite"
+  ],
   "author": "CrowdChat Team",
   "license": "MIT"
 }
-
-.env.example
-
-PORT=5000
-NODE_ENV=development
-JWT_SECRET=super_secret_crowdchat_jwt_key_change_in_production_998877
-CLIENT_URL=http://localhost:5173
-DATABASE_PATH=./server/db/crowdchat.db
-MAX_FILE_SIZE_MB=10
-DEFAULT_CHANNEL=main
-
-Backend Core Implementation
-
-server/config/constants.js
-
-module.exports = {
-  ROLES: {
-    ADMIN: 'admin',
-    MODERATOR: 'moderator',
-    USER: 'user',
-  },
-  PRESENCE: {
-    ONLINE: 'online',
-    IDLE: 'idle',
-    DND: 'dnd',
-    OFFLINE: 'offline',
-  },
-  LIMITS: {
-    MAX_GROUP_MEMBERS: 10,
-    MAX_MESSAGE_LENGTH: 2000,
-    RATE_LIMIT_MESSAGES: 5, // 5 messages
-    RATE_LIMIT_WINDOW_MS: 4000, // per 4 seconds
-    MAX_IMAGE_SIZE_BYTES: 10 * 1024 * 1024, // 10MB
-  },
-  REPORT_REASONS: [
-    'nsfw_content',
-    'harassment',
-    'personal_info_leak',
-    'spam_flooding',
-    'dangerous_content',
-    'other',
-  ],
-};
