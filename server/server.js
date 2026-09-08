@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const path = require('path');
+const fs = require('fs');
 const config = require('./config/config');
 const initializeSockets = require('./sockets');
 
@@ -26,10 +27,11 @@ app.set('io', io);
 
 // Security & Body Parsers
 app.use(helmet({
-  crossOriginResourcePolicy: { policy: 'cross-origin' }
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
+  contentSecurityPolicy: false
 }));
 app.use(cors({
-  origin: config.clientUrl,
+  origin: '*',
   credentials: true
 }));
 app.use(express.json({ limit: '10mb' }));
@@ -54,6 +56,15 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'healthy', timestamp: new Date().toISOString(), platform: 'CrowdChat' });
 });
 
+// Serve frontend build in production
+const clientDistPath = path.resolve(__dirname, '../client/dist');
+if (fs.existsSync(clientDistPath)) {
+  app.use(express.static(clientDistPath));
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(clientDistPath, 'index.html'));
+  });
+}
+
 // Global Error Handler
 app.use((err, req, res, next) => {
   console.error('Server error:', err);
@@ -61,14 +72,5 @@ app.use((err, req, res, next) => {
 });
 
 server.listen(config.port, () => {
-  console.log(`
-  🚀 ======================================================== 🚀
-                 C R O W D C H A T   S E R V E R
-  🚀 ======================================================== 🚀
-  📡 HTTP & WebSocket listening on port : ${config.port}
-  🌍 Client URL set to                   : ${config.clientUrl}
-  📁 Database path                       : ${config.dbPath}
-  🛡️ Environment                         : ${config.nodeEnv}
-  ============================================================
-  `);
+  console.log(`🚀 CrowdChat server running on port ${config.port}`);
 });
