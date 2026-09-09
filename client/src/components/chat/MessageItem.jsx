@@ -6,7 +6,7 @@ import LinkPreviewCard from './LinkPreviewCard';
 import { useAuth } from '../../context/AuthContext';
 import { useUI } from '../../context/UIContext';
 import { useSocket } from '../../context/SocketContext';
-import { formatDistanceToNow, format } from 'date-fns';
+import { formatChatTimestamp } from '../../utils/formatters';
 import { MessageSquareReply, SmilePlus, MoreHorizontal, ShieldAlert, Edit2, Trash2 } from 'lucide-react';
 
 export default function MessageItem({ message, onReply }) {
@@ -66,7 +66,7 @@ export default function MessageItem({ message, onReply }) {
 
       {/* Message Content Container */}
       <div className="flex-1 min-w-0">
-        {/* Reply Preview */}
+        {/* Reply Reference */}
         {message.reply_to_id && message.reply_content && (
           <div className="flex items-center gap-2 text-xs text-slate-400 mb-1.5 pl-3 border-l-2 border-indigo-500/60 bg-[#1A2236]/30 py-1 rounded-r-lg">
             <MessageSquareReply className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
@@ -75,7 +75,7 @@ export default function MessageItem({ message, onReply }) {
           </div>
         )}
 
-        {/* Sender Header */}
+        {/* Sender Info & Smart Timestamp */}
         <div className="flex items-center gap-2">
           <button
             type="button"
@@ -88,17 +88,13 @@ export default function MessageItem({ message, onReply }) {
 
           {message.sender_role === 'admin' && (
             <span className="text-[9px] font-extrabold uppercase tracking-wider bg-rose-500/20 text-rose-300 border border-rose-500/30 px-1.5 py-0.5 rounded-full">
-              Admin
-            </span>
-          )}
-          {message.sender_role === 'moderator' && (
-            <span className="text-[9px] font-extrabold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-1.5 py-0.5 rounded-full">
-              Mod
+              Crowd Admin
             </span>
           )}
 
-          <span className="text-[10px] text-slate-400 ml-1 font-medium select-none" title={format(new Date(message.created_at), 'PPpp')}>
-            {formatDistanceToNow(new Date(message.created_at), { addSuffix: true })}
+          {/* Normal Readable Timestamp */}
+          <span className="text-[11px] text-slate-400 ml-1 font-medium select-none">
+            {formatChatTimestamp(message.created_at)}
           </span>
 
           {message.is_edited === 1 && !message.is_deleted && (
@@ -126,7 +122,7 @@ export default function MessageItem({ message, onReply }) {
           </div>
         )}
 
-        {/* Media / Attachment Box */}
+        {/* Image Attachment Box */}
         {message.attachment_url && !message.is_deleted && (
           <div className="mt-2.5 max-w-sm rounded-2xl overflow-hidden border border-[#232D45] bg-[#0E121B] shadow-lg">
             <img
@@ -138,15 +134,15 @@ export default function MessageItem({ message, onReply }) {
           </div>
         )}
 
-        {/* YouTube Video Player Embed */}
+        {/* YouTube Embed */}
         {ytId && !message.is_deleted && <YouTubeEmbed videoId={ytId} />}
 
-        {/* Rich Link Card Preview */}
+        {/* Link Preview Card */}
         {!ytId && urls && urls.length > 0 && !message.is_deleted && (
           <LinkPreviewCard url={urls[0]} />
         )}
 
-        {/* Reactions List */}
+        {/* Reactions */}
         {message.reactions && Object.keys(message.reactions).length > 0 && (
           <div className="flex flex-wrap gap-1.5 mt-2">
             {Object.values(message.reactions).map((r) => {
