@@ -10,17 +10,16 @@ export function ChatProvider({ children }) {
   const { socket } = useSocket();
   const { user } = useAuth();
 
-  // Active view state: { type: 'channel' | 'dm' | 'group', id: number, data: object }
   const [activeView, setActiveView] = useState({ type: 'channel', id: 1, data: { name: 'main', topic: 'The heart of CrowdChat!' } });
   const [channels, setChannels] = useState([]);
   const [dms, setDms] = useState([]);
   const [groups, setGroups] = useState([]);
   const [messages, setMessages] = useState([]);
+  const [activeChatMembers, setActiveChatMembers] = useState([]);
   const [loadingMessages, setLoadingMessages] = useState(false);
   const [replyingTo, setReplyingTo] = useState(null);
   const [typingUsers, setTypingUsers] = useState({});
 
-  // Fetch initial channels, DMs, groups
   const refreshChannels = useCallback(async () => {
     try {
       const res = await api.get('/channels');
@@ -50,11 +49,16 @@ export function ChatProvider({ children }) {
     }
   }, [user, refreshChannels, refreshDMs, refreshGroups]);
 
-  // Load message history when activeView changes
+  // Handle room joining & message loading
   useEffect(() => {
     if (!user || !activeView.id) return;
     setLoadingMessages(true);
     setReplyingTo(null);
+
+    const roomKey = `${activeView.type}_${activeView.id}`;
+    if (socket) {
+      socket.emit('room:join_chat', roomKey);
+    }
 
     async function loadChat() {
       try {
@@ -79,9 +83,16 @@ export function ChatProvider({ children }) {
     loadChat();
   }, [activeView.type, activeView.id, user, socket]);
 
-  // Real-time socket message listeners
+  // Real-time socket message listeners & room roster
   useEffect(() => {
     if (!socket) return;
+
+    const handleRoomRoster = ({ roomId, members }) => {
+      const currentRoomKey = `${activeView.type}_${activeView.id}`;
+      if (roomId === currentRoomKey) {
+        setActiveChatMembers(members);
+      }
+    };
 
     const handleNewMessage = (newMsg) => {
       const isCurrentChat =
@@ -126,6 +137,7 @@ export function ChatProvider({ children }) {
       });
     };
 
+    socket.on('room:roster', handleRoomRoster);
     socket.on('chat:new_message', handleNewMessage);
     socket.on('dm:new_message', handleNewMessage);
     socket.on('group:new_message', handleNewMessage);
@@ -138,6 +150,7 @@ export function ChatProvider({ children }) {
     socket.on('typing:hide', handleTypingHide);
 
     return () => {
+      socket.off('room:roster', handleRoomRoster);
       socket.off('chat:new_message', handleNewMessage);
       socket.off('dm:new_message', handleNewMessage);
       socket.off('group:new_message', handleNewMessage);
@@ -160,6 +173,7 @@ export function ChatProvider({ children }) {
         dms,
         groups,
         messages,
+        activeChatMembers,
         loadingMessages,
         replyingTo,
         setReplyingTo,
