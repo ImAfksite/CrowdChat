@@ -13,8 +13,7 @@ import {
   Settings,
   LogOut,
   Radio,
-  Lock,
-  Sparkles
+  Lock
 } from 'lucide-react';
 
 export default function Sidebar() {
@@ -23,7 +22,7 @@ export default function Sidebar() {
   const {
     setIsSearchOpen,
     setIsAdminOpen,
-    setIsProfileOpen,
+    setIsSettingsOpen,
     setIsCreateChannelOpen,
     setIsCreateGroupOpen,
     setIsStartDMOpen,
@@ -35,22 +34,21 @@ export default function Sidebar() {
 
   return (
     <aside
-      className={`fixed inset-y-0 left-0 z-40 w-64 bg-[#111622] border-r border-[#232D45] flex flex-col transition-transform duration-300 lg:translate-x-0 ${
+      className={`fixed inset-y-0 left-0 z-40 w-64 bg-[var(--bg-sidebar)] border-r border-[var(--border-color)] flex flex-col transition-transform duration-300 lg:translate-x-0 ${
         isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'
       }`}
     >
-      {/* Brand Header */}
-      <div className="h-16 px-4 border-b border-[#232D45] flex items-center justify-between bg-[#111622]">
+      {/* Brand Header without LIVE label */}
+      <div className="h-16 px-4 border-b border-[var(--border-color)] flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-purple-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
             <Radio className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h1 className="font-extrabold text-sm tracking-tight text-white flex items-center gap-1.5">
+            <h1 className="font-extrabold text-sm tracking-tight text-[var(--text-main)]">
               CrowdChat
-              <span className="text-[9px] font-extrabold text-indigo-400 bg-indigo-500/10 px-1.5 py-0.5 rounded-full border border-indigo-500/20">LIVE</span>
             </h1>
-            <p className="text-[11px] text-slate-400">One Shared Space</p>
+            <p className="text-[11px] text-[var(--text-muted)]">One Shared Space</p>
           </div>
         </div>
       </div>
@@ -59,13 +57,13 @@ export default function Sidebar() {
       <div className="px-3 pt-3">
         <button
           onClick={() => setIsSearchOpen(true)}
-          className="w-full flex items-center justify-between px-3 py-2 bg-[#151B2B] hover:bg-[#1A2236] border border-[#232D45] rounded-xl text-xs text-slate-400 hover:text-slate-200 transition-all shadow-inner group"
+          className="w-full flex items-center justify-between px-3 py-2 bg-[var(--bg-panel)] hover:bg-[var(--bg-card)] border border-[var(--border-color)] rounded-xl text-xs text-[var(--text-muted)] hover:text-[var(--text-main)] transition-all shadow-inner group"
         >
           <span className="flex items-center gap-2">
-            <Search className="w-3.5 h-3.5 text-slate-400 group-hover:text-indigo-400 transition-colors" />
+            <Search className="w-3.5 h-3.5 text-[var(--text-muted)] group-hover:text-indigo-400 transition-colors" />
             <span>Search messages...</span>
           </span>
-          <kbd className="text-[10px] bg-[#232D45] text-slate-300 px-1.5 py-0.5 rounded font-mono">⌘K</kbd>
+          <kbd className="text-[10px] bg-[var(--border-color)] text-[var(--text-muted)] px-1.5 py-0.5 rounded font-mono">⌘K</kbd>
         </button>
       </div>
 
@@ -74,11 +72,11 @@ export default function Sidebar() {
         {/* Public Channels */}
         <div>
           <div className="flex items-center justify-between px-2 mb-2">
-            <span className="text-[10px] font-bold tracking-wider uppercase text-slate-400">Public Channels</span>
+            <span className="text-[10px] font-bold tracking-wider uppercase text-[var(--text-muted)]">Public Channels</span>
             {user?.role === 'admin' && (
               <button
                 onClick={() => setIsCreateChannelOpen(true)}
-                className="w-5 h-5 rounded-md hover:bg-[#1A2236] text-slate-400 hover:text-white flex items-center justify-center transition-colors"
+                className="w-5 h-5 rounded-md hover:bg-[var(--bg-card)] text-[var(--text-muted)] hover:text-[var(--text-main)] flex items-center justify-center transition-colors"
                 title="Create Channel"
               >
                 <Plus className="w-3.5 h-3.5" />
@@ -98,14 +96,14 @@ export default function Sidebar() {
                   className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
                     isActive
                       ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                      : 'text-slate-300 hover:text-white hover:bg-[#1A2236]'
+                      : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-card)]'
                   }`}
                 >
                   <span className="flex items-center gap-2.5 truncate">
-                    <Hash className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-slate-400'}`} />
+                    <Hash className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-[var(--text-muted)]'}`} />
                     <span className="truncate">{chan.name}</span>
                   </span>
-                  {chan.is_read_only === 1 && <Lock className="w-3 h-3 text-slate-400" />}
+                  {chan.is_read_only === 1 && <Lock className="w-3 h-3 text-[var(--text-muted)]" />}
                 </button>
               );
             })}
@@ -115,10 +113,10 @@ export default function Sidebar() {
         {/* Direct Messages */}
         <div>
           <div className="flex items-center justify-between px-2 mb-2">
-            <span className="text-[10px] font-bold tracking-wider uppercase text-slate-400">Direct Messages</span>
+            <span className="text-[10px] font-bold tracking-wider uppercase text-[var(--text-muted)]">Direct Messages</span>
             <button
               onClick={() => setIsStartDMOpen(true)}
-              className="w-5 h-5 rounded-md hover:bg-[#1A2236] text-slate-400 hover:text-white flex items-center justify-center transition-colors"
+              className="w-5 h-5 rounded-md hover:bg-[var(--bg-card)] text-[var(--text-muted)] hover:text-[var(--text-main)] flex items-center justify-center transition-colors"
               title="New DM"
             >
               <Plus className="w-3.5 h-3.5" />
@@ -126,7 +124,7 @@ export default function Sidebar() {
           </div>
           <div className="space-y-1">
             {dms.length === 0 ? (
-              <p className="px-3 py-2 text-[11px] text-slate-400 italic bg-[#151B2B]/40 rounded-xl">No active DMs</p>
+              <p className="px-3 py-2 text-[11px] text-[var(--text-muted)] italic bg-[var(--bg-panel)] rounded-xl">No active DMs</p>
             ) : (
               dms.map((dm) => {
                 const isActive = activeView.type === 'dm' && activeView.id === dm.other_user_id;
@@ -144,7 +142,7 @@ export default function Sidebar() {
                     className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
                       isActive
                         ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                        : 'text-slate-300 hover:text-white hover:bg-[#1A2236]'
+                        : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-card)]'
                     }`}
                   >
                     <span className="flex items-center gap-2.5 truncate">
@@ -158,7 +156,7 @@ export default function Sidebar() {
                       <span className="truncate">{dm.display_name || dm.username}</span>
                     </span>
                     {dm.has_unread && (
-                      <span className="w-2 h-2 rounded-full bg-indigo-400 ring-2 ring-indigo-900" />
+                      <span className="w-2 h-2 rounded-full bg-indigo-400" />
                     )}
                   </button>
                 );
@@ -170,10 +168,10 @@ export default function Sidebar() {
         {/* Private Groups */}
         <div>
           <div className="flex items-center justify-between px-2 mb-2">
-            <span className="text-[10px] font-bold tracking-wider uppercase text-slate-400">Private Groups</span>
+            <span className="text-[10px] font-bold tracking-wider uppercase text-[var(--text-muted)]">Private Groups</span>
             <button
               onClick={() => setIsCreateGroupOpen(true)}
-              className="w-5 h-5 rounded-md hover:bg-[#1A2236] text-slate-400 hover:text-white flex items-center justify-center transition-colors"
+              className="w-5 h-5 rounded-md hover:bg-[var(--bg-card)] text-[var(--text-muted)] hover:text-[var(--text-main)] flex items-center justify-center transition-colors"
               title="New Group (Max 10)"
             >
               <Plus className="w-3.5 h-3.5" />
@@ -181,7 +179,7 @@ export default function Sidebar() {
           </div>
           <div className="space-y-1">
             {groups.length === 0 ? (
-              <p className="px-3 py-2 text-[11px] text-slate-400 italic bg-[#151B2B]/40 rounded-xl">No groups joined</p>
+              <p className="px-3 py-2 text-[11px] text-[var(--text-muted)] italic bg-[var(--bg-panel)] rounded-xl">No groups joined</p>
             ) : (
               groups.map((grp) => {
                 const isActive = activeView.type === 'group' && activeView.id === grp.id;
@@ -195,14 +193,14 @@ export default function Sidebar() {
                     className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
                       isActive
                         ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                        : 'text-slate-300 hover:text-white hover:bg-[#1A2236]'
+                        : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-card)]'
                     }`}
                   >
                     <span className="flex items-center gap-2.5 truncate">
-                      <Users className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-slate-400'}`} />
+                      <Users className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-[var(--text-muted)]'}`} />
                       <span className="truncate">{grp.name}</span>
                     </span>
-                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#232D45] text-slate-300">{grp.member_count}/10</span>
+                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[var(--border-color)] text-[var(--text-muted)]">{grp.member_count}/10</span>
                   </button>
                 );
               })
@@ -213,7 +211,7 @@ export default function Sidebar() {
 
       {/* Staff Action Button */}
       {isStaff && (
-        <div className="px-3 py-2 border-t border-[#232D45]">
+        <div className="px-3 py-2 border-t border-[var(--border-color)]">
           <button
             onClick={() => setIsAdminOpen(true)}
             className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 rounded-xl text-xs font-bold transition-all shadow-sm"
@@ -224,9 +222,9 @@ export default function Sidebar() {
       )}
 
       {/* Current User Card */}
-      <div className="p-3 bg-[#0E121B] border-t border-[#232D45] flex items-center justify-between">
+      <div className="p-3 bg-[var(--bg-panel)] border-t border-[var(--border-color)] flex items-center justify-between">
         <div
-          onClick={() => setIsProfileOpen(true)}
+          onClick={() => setIsSettingsOpen(true)}
           className="flex items-center gap-2.5 cursor-pointer hover:opacity-90 transition-opacity min-w-0 flex-1 pr-2"
         >
           <Avatar
@@ -237,16 +235,16 @@ export default function Sidebar() {
             size="sm"
           />
           <div className="min-w-0">
-            <p className="text-xs font-bold text-white truncate">{user?.display_name || user?.username}</p>
-            <p className="text-[10px] text-slate-400 truncate">@{user?.username}</p>
+            <p className="text-xs font-bold text-[var(--text-main)] truncate">{user?.display_name || user?.username}</p>
+            <p className="text-[10px] text-[var(--text-muted)] truncate">@{user?.username}</p>
           </div>
         </div>
 
-        <div className="flex items-center gap-1 text-slate-400 shrink-0">
+        <div className="flex items-center gap-1 text-[var(--text-muted)] shrink-0">
           <button
-            onClick={() => setIsProfileOpen(true)}
-            className="p-1.5 hover:text-white hover:bg-[#1A2236] rounded-lg transition-colors"
-            title="Edit Profile"
+            onClick={() => setIsSettingsOpen(true)}
+            className="p-1.5 hover:text-[var(--text-main)] hover:bg-[var(--bg-card)] rounded-lg transition-colors"
+            title="User Settings"
           >
             <Settings className="w-4 h-4" />
           </button>
