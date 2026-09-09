@@ -1,89 +1,59 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useChat } from '../../context/ChatContext';
-import { useSocket } from '../../context/SocketContext';
 import { useUI } from '../../context/UIContext';
 import Avatar from '../common/Avatar';
-import api from '../../api/client';
-import { Users, Info, Shield, Plus, UserX, Crown } from 'lucide-react';
+import { Users, Crown, Shield } from 'lucide-react';
 
 export default function RightSidebar() {
-  const { activeView } = useChat();
-  const { presenceMap } = useSocket();
+  const { activeView, activeChatMembers } = useChat();
   const { setInspectUser } = useUI();
-  const [groupMembers, setGroupMembers] = useState([]);
-
-  useEffect(() => {
-    if (activeView.type === 'group') {
-      api.get(`/groups/${activeView.id}/members`).then(res => {
-        setGroupMembers(res.data.members || []);
-      });
-    }
-  }, [activeView.type, activeView.id]);
 
   return (
-    <aside className="hidden xl:flex w-64 bg-[#11131a] border-l border-slate-800/80 flex-col">
-      {/* Header Info */}
-      <div className="p-4 border-b border-slate-800/80">
-        <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-          <Info className="w-4 h-4 text-crowd-400" />
-          {activeView.type === 'channel' ? 'About Channel' : activeView.type === 'group' ? 'Group Details' : 'User Info'}
+    <aside className="hidden xl:flex w-64 bg-[var(--bg-sidebar)] border-l border-[var(--border-color)] flex-col">
+      {/* Header */}
+      <div className="h-16 px-4 border-b border-[var(--border-color)] flex items-center justify-between">
+        <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] flex items-center gap-2">
+          <Users className="w-4 h-4 text-indigo-400" />
+          <span>In This Chat ({activeChatMembers.length})</span>
         </h3>
-        <p className="text-xs text-slate-300 mt-2">
-          {activeView.type === 'channel' && (activeView.data?.topic || 'Public conversation channel.')}
-          {activeView.type === 'group' && `Private group with ${groupMembers.length} members (max 10).`}
-          {activeView.type === 'dm' && '1-to-1 secure private conversation.'}
-        </p>
       </div>
 
-      {/* Member List for Groups / Online Showcase */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {activeView.type === 'group' ? (
-          <div>
-            <div className="text-[11px] font-bold text-slate-400 uppercase mb-2 flex items-center justify-between">
-              <span>Members ({groupMembers.length}/10)</span>
-            </div>
-            <div className="space-y-1">
-              {groupMembers.map((m) => (
-                <div
-                  key={m.id}
-                  onClick={() => setInspectUser(m.id)}
-                  className="flex items-center justify-between p-1.5 hover:bg-slate-800/60 rounded-xl cursor-pointer transition-colors"
-                >
-                  <div className="flex items-center gap-2 min-w-0">
-                    <Avatar
-                      src={m.avatar_url}
-                      username={m.username}
-                      userId={m.id}
-                      showPresence={true}
-                      size="xs"
-                    />
-                    <span className="text-xs text-slate-200 truncate">{m.display_name || m.username}</span>
-                  </div>
-                  {m.role === 'owner' && <Crown className="w-3.5 h-3.5 text-amber-400" title="Group Owner" />}
-                </div>
-              ))}
-            </div>
+      {/* Member Roster for Active Room */}
+      <div className="flex-1 overflow-y-auto p-3 space-y-1">
+        {activeChatMembers.length === 0 ? (
+          <div className="p-4 text-center text-xs text-[var(--text-muted)] italic">
+            Connecting to room...
           </div>
         ) : (
-          <div>
-            <div className="text-[11px] font-bold text-slate-400 uppercase mb-2">
-              Crowd Atmosphere
+          activeChatMembers.map((m) => (
+            <div
+              key={m.id}
+              onClick={() => setInspectUser(m.id)}
+              className="flex items-center justify-between p-2 hover:bg-[var(--bg-card)] rounded-xl cursor-pointer transition-colors"
+            >
+              <div className="flex items-center gap-2.5 min-w-0">
+                <Avatar
+                  src={m.avatar_url}
+                  username={m.username}
+                  userId={m.id}
+                  showPresence={true}
+                  size="sm"
+                />
+                <div className="min-w-0">
+                  <p className="text-xs font-semibold text-[var(--text-main)] truncate">
+                    {m.display_name || m.username}
+                  </p>
+                  <p className="text-[10px] text-[var(--text-muted)] truncate">@{m.username}</p>
+                </div>
+              </div>
+
+              {m.role === 'admin' && (
+                <span className="text-[9px] font-extrabold uppercase bg-rose-500/20 text-rose-400 px-1.5 py-0.5 rounded border border-rose-500/30">
+                  Admin
+                </span>
+              )}
             </div>
-            <div className="p-3 bg-slate-900/60 rounded-xl border border-slate-800 text-xs text-slate-300 space-y-2">
-              <div className="flex justify-between">
-                <span className="text-slate-400">Server Type:</span>
-                <span className="font-semibold text-crowd-400">Single Public Space</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-400">Rate Limit:</span>
-                <span className="text-emerald-400">Protected</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-400">Moderation:</span>
-                <span className="text-indigo-400">Active</span>
-              </div>
-            </div>
-          </div>
+          ))
         )}
       </div>
     </aside>
