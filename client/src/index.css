@@ -4,14 +4,40 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Base Reset & Design Variables */
-:root {
+/* Theme Color Variables */
+:root, .theme-dark {
   --bg-base: #0B0E14;
   --bg-sidebar: #111622;
   --bg-panel: #151B2B;
   --bg-card: #1A2236;
   --bg-hover: #222D47;
   --border-color: #232D45;
+  --text-main: #F1F5F9;
+  --text-muted: #94A3B8;
+  --primary: #6366f1;
+}
+
+.theme-light {
+  --bg-base: #F1F5F9;
+  --bg-sidebar: #FFFFFF;
+  --bg-panel: #F8FAFC;
+  --bg-card: #FFFFFF;
+  --bg-hover: #E2E8F0;
+  --border-color: #CBD5E1;
+  --text-main: #0F172A;
+  --text-muted: #64748B;
+  --primary: #4f46e5;
+}
+
+.theme-black {
+  --bg-base: #000000;
+  --bg-sidebar: #080808;
+  --bg-panel: #101010;
+  --bg-card: #161616;
+  --bg-hover: #242424;
+  --border-color: #262626;
+  --text-main: #FFFFFF;
+  --text-muted: #888888;
   --primary: #6366f1;
 }
 
@@ -25,10 +51,11 @@ html, body, #root {
   height: 100%;
   width: 100%;
   background-color: var(--bg-base);
-  color: #F1F5F9;
+  color: var(--text-main);
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   overflow: hidden;
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 /* Custom Scrollbars */
@@ -42,20 +69,14 @@ html, body, #root {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #2A3654;
+  background: var(--border-color);
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #3B4D77;
+  background: var(--bg-hover);
 }
 
-/* Smooth input focus states */
-input, textarea, button {
-  font-family: inherit;
-}
-
-/* Selection highlight */
 ::selection {
   background-color: rgba(99, 102, 241, 0.4);
   color: #FFFFFF;
