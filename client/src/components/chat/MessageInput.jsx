@@ -7,7 +7,6 @@ import StickerPicker from '../media/StickerPicker';
 import api from '../../api/client';
 import {
   SendHorizontal,
-  Image as ImageIcon,
   Sparkles,
   Smile,
   X,
@@ -21,7 +20,7 @@ export default function MessageInput() {
   const { user } = useAuth();
 
   const [text, setText] = useState('');
-  const [attachment, setAttachment] = useState(null); // { url, type }
+  const [attachment, setAttachment] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [showGifPicker, setShowGifPicker] = useState(false);
   const [showStickerPicker, setShowStickerPicker] = useState(false);
@@ -30,7 +29,6 @@ export default function MessageInput() {
   const textareaRef = useRef(null);
   const typingTimeoutRef = useRef(null);
 
-  // Auto-focus input on activeView change
   useEffect(() => {
     textareaRef.current?.focus();
   }, [activeView.id]);
@@ -71,14 +69,12 @@ export default function MessageInput() {
     }
   };
 
-  // Support clipboard paste (Ctrl+V image upload)
   const handlePaste = (e) => {
     const items = e.clipboardData?.items;
     if (items) {
       for (const item of items) {
         if (item.type.indexOf('image') !== -1) {
-          const file = item.getAsFile();
-          handleFileUpload(file);
+          handleFileUpload(item.getAsFile());
         }
       }
     }
@@ -123,12 +119,12 @@ export default function MessageInput() {
   };
 
   return (
-    <div className="p-3 bg-[#13161f] border-t border-slate-800/80 relative">
+    <div className="p-4 bg-[#0B0E14] border-t border-[#232D45] relative">
       {/* Reply Banner */}
       {replyingTo && (
-        <div className="flex items-center justify-between px-3 py-1.5 mb-2 bg-slate-800/80 rounded-lg text-xs border-l-4 border-crowd-500">
+        <div className="flex items-center justify-between px-3 py-2 mb-2 bg-[#1A2236] rounded-xl text-xs border-l-4 border-indigo-500 shadow-md">
           <span className="text-slate-300 truncate">
-            Replying to <span className="font-semibold text-white">@{replyingTo.sender_username}</span>: "{replyingTo.content}"
+            Replying to <strong className="text-white">@{replyingTo.sender_username}</strong>: "{replyingTo.content}"
           </span>
           <button onClick={() => setReplyingTo(null)} className="text-slate-400 hover:text-white p-1">
             <X className="w-3.5 h-3.5" />
@@ -138,20 +134,20 @@ export default function MessageInput() {
 
       {/* Attachment Preview */}
       {attachment && (
-        <div className="relative inline-block mb-2 rounded-lg overflow-hidden border border-slate-700 bg-black/40">
-          <img src={attachment.url} alt="Upload preview" className="h-20 w-auto object-cover rounded" />
+        <div className="relative inline-block mb-3 rounded-xl overflow-hidden border border-[#232D45] bg-[#111622] shadow-lg">
+          <img src={attachment.url} alt="Attachment" className="h-20 w-auto object-cover" />
           <button
             onClick={() => setAttachment(null)}
-            className="absolute top-1 right-1 bg-black/70 hover:bg-black text-white rounded-full p-1 shadow"
+            className="absolute top-1 right-1 bg-black/80 hover:bg-black text-white rounded-full p-1 shadow"
           >
             <X className="w-3 h-3" />
           </button>
         </div>
       )}
 
-      {/* Input container */}
-      <div className="flex items-end gap-2 bg-slate-900/90 rounded-2xl p-1.5 border border-slate-800 focus-within:border-crowd-500/60 focus-within:ring-1 focus-within:ring-crowd-500/30 transition-all shadow-inner">
-        {/* Upload Button */}
+      {/* Input Pill Container */}
+      <div className="flex items-center gap-2 bg-[#151B2B] rounded-2xl p-2 border border-[#232D45] focus-within:border-indigo-500/60 focus-within:ring-1 focus-within:ring-indigo-500/30 transition-all shadow-card">
+        {/* Upload Attachment */}
         <input
           type="file"
           ref={fileInputRef}
@@ -163,10 +159,10 @@ export default function MessageInput() {
           type="button"
           onClick={() => fileInputRef.current?.click()}
           disabled={uploading}
-          className="p-2 text-slate-400 hover:text-crowd-400 hover:bg-slate-800 rounded-xl transition-colors shrink-0"
-          title="Attach an Image"
+          className="p-2 text-slate-400 hover:text-indigo-400 hover:bg-[#1A2236] rounded-xl transition-colors shrink-0"
+          title="Attach Image"
         >
-          {uploading ? <Loader2 className="w-5 h-5 animate-spin text-crowd-400" /> : <Paperclip className="w-5 h-5" />}
+          {uploading ? <Loader2 className="w-5 h-5 animate-spin text-indigo-400" /> : <Paperclip className="w-5 h-5" />}
         </button>
 
         {/* Text Input */}
@@ -187,18 +183,18 @@ export default function MessageInput() {
               : `Message group...`
           }
           rows={1}
-          className="w-full bg-transparent text-sm text-slate-100 placeholder-slate-500 focus:outline-none resize-none max-h-32 py-2 px-1"
+          className="w-full bg-transparent text-sm text-slate-100 placeholder-slate-400 focus:outline-none resize-none max-h-32 py-1 px-1"
         />
 
-        {/* Media Pickers (GIFs & Stickers) */}
+        {/* Action Controls */}
         <div className="flex items-center gap-1 shrink-0">
           <button
             type="button"
             onClick={() => { setShowGifPicker(!showGifPicker); setShowStickerPicker(false); }}
-            className={`p-2 rounded-xl text-xs font-bold transition-all ${
-              showGifPicker ? 'bg-crowd-600 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-800'
+            className={`p-2 rounded-xl transition-all ${
+              showGifPicker ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white hover:bg-[#1A2236]'
             }`}
-            title="GIF Search"
+            title="GIFs"
           >
             <Sparkles className="w-5 h-5" />
           </button>
@@ -207,21 +203,20 @@ export default function MessageInput() {
             type="button"
             onClick={() => { setShowStickerPicker(!showStickerPicker); setShowGifPicker(false); }}
             className={`p-2 rounded-xl transition-all ${
-              showStickerPicker ? 'bg-crowd-600 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-800'
+              showStickerPicker ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white hover:bg-[#1A2236]'
             }`}
             title="Stickers"
           >
             <Smile className="w-5 h-5" />
           </button>
 
-          {/* Send Button */}
           <button
             type="button"
             onClick={handleSend}
             disabled={!text.trim() && !attachment}
             className={`p-2 rounded-xl transition-all ${
               text.trim() || attachment
-                ? 'bg-crowd-600 text-white hover:bg-crowd-500 shadow-md shadow-crowd-600/30 hover:scale-105'
+                ? 'bg-indigo-600 text-white hover:bg-indigo-500 shadow-lg shadow-indigo-600/40 hover:scale-105'
                 : 'text-slate-600 cursor-not-allowed'
             }`}
           >
@@ -230,7 +225,7 @@ export default function MessageInput() {
         </div>
       </div>
 
-      {/* Popovers */}
+      {/* Popups */}
       {showGifPicker && (
         <GifPicker
           onSelect={(url) => {
