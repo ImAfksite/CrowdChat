@@ -6,7 +6,7 @@ import MessageList from './components/chat/MessageList';
 import MessageInput from './components/chat/MessageInput';
 import RightSidebar from './components/layout/RightSidebar';
 import AuthModal from './components/auth/AuthModal';
-import UserProfileModal from './components/profile/UserProfileModal';
+import SettingsModal from './components/settings/SettingsModal';
 import AdminPanelModal from './components/admin/AdminPanelModal';
 import ReportModal from './components/modals/ReportModal';
 import CreateGroupModal from './components/groups/CreateGroupModal';
@@ -19,9 +19,9 @@ export default function App() {
 
   if (loading) {
     return (
-      <div className="h-screen w-screen bg-[#0e1015] flex items-center justify-center text-slate-400 gap-3">
-        <Loader2 className="w-8 h-8 animate-spin text-crowd-500" />
-        <span className="font-semibold text-sm">Initializing CrowdChat Platform...</span>
+      <div className="h-screen w-screen bg-[#0B0E14] flex items-center justify-center text-slate-400 gap-3">
+        <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
+        <span className="font-semibold text-sm">Initializing CrowdChat...</span>
       </div>
     );
   }
@@ -31,7 +31,7 @@ export default function App() {
   }
 
   return (
-    <div className="flex h-screen w-screen bg-[#0e1015] overflow-hidden">
+    <div className="flex h-screen w-screen bg-[var(--bg-base)] text-[var(--text-main)] overflow-hidden">
       {/* Navigation Left Sidebar */}
       <Sidebar />
 
@@ -42,11 +42,11 @@ export default function App() {
         <MessageInput />
       </div>
 
-      {/* Contextual Right Sidebar */}
+      {/* Right Sidebar: Active In-Chat Roster */}
       <RightSidebar />
 
-      {/* Interactive Global Modals */}
-      <UserProfileModal />
+      {/* Global Modals */}
+      <SettingsModal />
       <AdminPanelModal />
       <ReportModal />
       <CreateGroupModal />
